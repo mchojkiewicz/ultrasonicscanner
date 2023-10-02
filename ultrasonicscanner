@@ -1,0 +1,112 @@
+/*
+ * created by Rui Santos, http://randomnerdtutorials.com
+ * 
+ * Complete Guide for Ultrasonic Sensor HC-SR04
+ *
+    Ultrasonic sensor Pins:
+        VCC: +5VDC
+        Trig : Trigger (INPUT) - Pin11
+        Echo: Echo (OUTPUT) - Pin 12
+        GND: GND
+ */
+/* Sweep
+ by BARRAGAN <http://barraganstudio.com>
+ This example code is in the public domain.
+
+ modified 8 Nov 2013
+ by Scott Fitzgerald
+ https://www.arduino.cc/en/Tutorial/LibraryExamples/Sweep
+*/
+
+#include <Servo.h>
+
+Servo myservo;  // create servo object to control a servo
+// twelve servo objects can be created on most boards
+
+int pos = 0;    // variable to store the servo position
+
+
+int trigPin = 11;    //Trig - green Jumper
+int echoPin = 12;    //Echo - yellow Jumper
+long duration, cm;
+ 
+void setup() {
+  //Serial Port begin
+  Serial.begin (9600);
+  //Define inputs and outputs
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+
+}
+ 
+void loop()
+{
+ 
+ for (pos = 0; pos <= 120; pos += 5) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(75);                       // waits 15 ms for the servo to reach the position
+    // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
+  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(5);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    // Read the signal from the sensor: a HIGH pulse whose
+    // duration is the time (in microseconds) from the sending
+    // of the ping to the reception of its echo off of an object.
+    pinMode(echoPin, INPUT);
+    duration = pulseIn(echoPin, HIGH);
+
+
+
+    // convert the time into a distance
+    cm = (duration/2) / 29.1;
+
+    Serial.print(cm);
+    Serial.print("cm");
+    Serial.print(pos);
+    Serial.print("degrees");
+    Serial.println();
+
+    delay(1000);
+    
+  }
+
+  for (pos = 120; pos >= 0; pos -= 5) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(75);                       // waits 15 ms for the servo to reach the position
+  
+  // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
+  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(5);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+   
+ 
+    // Read the signal from the sensor: a HIGH pulse whose
+    // duration is the time (in microseconds) from the sending
+    // of the ping to the reception of its echo off of an object.
+    pinMode(echoPin, INPUT);
+    duration = pulseIn(echoPin, HIGH);
+
+
+
+    // convert the time into a distance
+    cm = (duration/2) / 29.1;
+
+    Serial.print(cm);
+    Serial.print("cm");
+    Serial.print(pos);
+    Serial.print("degrees");
+    Serial.println();
+
+    delay(1000);
+    }
+
+}
